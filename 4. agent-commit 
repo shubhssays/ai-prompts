@@ -1,0 +1,195 @@
+You are a Staff-level DevEx + Platform Engineer.
+
+I already have a production-grade `agent-cli` system that:
+- Maintains `.agent` knowledge base
+- Maintains `.memory`
+- Has commands: analyze, learn, review, snapshot, decide
+- Is CI-aware
+- Is PR-aware
+- Is branch-aware
+- Has husky integration
+- Has infinite loop protection
+- Uses agent.config.json
+- Supports multiple AI providers
+
+DO NOT regenerate the system.
+Extend it cleanly.
+
+--------------------------------------------------
+OBJECTIVE
+--------------------------------------------------
+
+Add a new high-level command:
+
+    agent commit "<message>"
+
+This command must:
+
+1. Stage code changes
+2. Create the actual code commit
+3. Run knowledge update (learn mode)
+4. Commit `.agent` changes if any
+5. Show beautiful progress UI
+6. Respect all enterprise safety rules
+7. Never corrupt git history
+8. Never block developer workflow
+
+--------------------------------------------------
+BEHAVIOR SPECIFICATION
+--------------------------------------------------
+
+When user runs:
+
+    agent commit "feat: add auth middleware"
+
+The system must execute:
+
+STEP 1 — Validate working tree
+- Exit if no changes
+- Show clean message
+
+STEP 2 — Stage changes
+- git add -A
+- Respect .gitignore
+
+STEP 3 — Create code commit
+- git commit -m "<user message>"
+- If fails → exit cleanly
+
+STEP 4 — Run knowledge update
+- Internally call learn command
+- NOT in dry-run
+- Respect branch rules
+- Respect CI rules
+- Respect PR rules
+- Respect config autoCommit settings
+
+STEP 5 — If `.agent` or `.memory` changed:
+    git add .agent .memory
+    git commit -m "chore(agent): sync knowledge base [skip ci]"
+
+STEP 6 — Exit with clean summary
+
+--------------------------------------------------
+PROGRESS UI REQUIREMENTS
+--------------------------------------------------
+
+Use professional CLI UX.
+
+Preferred libraries:
+- listr2 (best)
+OR
+- ora + cli-progress + chalk
+
+Console should show structured progress:
+
+✔ Staging files
+✔ Code commit created
+✔ Analyzing git diff
+✔ Updating knowledge base
+✔ Syncing memory
+✔ Knowledge commit created
+
+On failure:
+✖ LLM failed — knowledge update skipped
+✔ Code commit preserved
+
+Must look polished and production-grade.
+
+--------------------------------------------------
+CRITICAL SAFETY RULES
+--------------------------------------------------
+
+1. If LLM fails:
+   - Do NOT revert code commit
+   - Log warning
+   - Exit gracefully
+
+2. Infinite loop guard:
+   - If last commit contains "chore(agent):"
+     exit immediately
+
+3. Branch rules:
+   - main/master → no knowledge auto-commit
+   - feature/* → allowed (config controlled)
+   - release/* → validation only
+
+4. CI mode:
+   - agent commit must refuse to run in CI
+   - Show clear message
+
+5. PR mode:
+   - Do not commit knowledge
+   - Only generate report
+
+--------------------------------------------------
+CLI OPTIONS
+--------------------------------------------------
+
+Support:
+
+agent commit "<msg>" --no-knowledge
+agent commit "<msg>" --dry-run
+agent commit "<msg>" --amend
+agent commit "<msg>" --verbose
+
+--no-knowledge → Only commit code
+--dry-run → Show what would happen
+--amend → Use git commit --amend
+--verbose → Detailed logs
+
+--------------------------------------------------
+CONFIG INTEGRATION
+--------------------------------------------------
+
+Respect:
+
+agent.config.json
+
+Example:
+
+{
+  "autoCommit": true,
+  "branchRules": { ... },
+  "ciMode": { ... },
+  "pullRequestMode": { ... }
+}
+
+Do NOT hardcode logic.
+
+--------------------------------------------------
+ARCHITECTURE REQUIREMENTS
+--------------------------------------------------
+
+Refactor cleanly if needed:
+
+- Separate Git service layer
+- Separate AI service layer
+- Separate Progress UI layer
+- Separate Config loader
+- Separate Environment detector
+
+Code must be modular and testable.
+
+--------------------------------------------------
+OUTPUT REQUIREMENTS
+--------------------------------------------------
+
+1. Updated CLI implementation
+2. New commit command implementation
+3. Progress UI integration
+4. Git helper module
+5. Safety guard logic
+6. Updated package.json scripts
+7. Example console output
+8. How to test safely
+9. Edge case handling
+
+--------------------------------------------------
+IMPORTANT
+
+Do NOT simplify.
+Do NOT produce pseudo-code.
+Do NOT break existing commands.
+
+Design this like an internal developer platform tool for a serious engineering organization.

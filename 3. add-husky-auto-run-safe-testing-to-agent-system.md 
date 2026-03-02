@@ -1,0 +1,274 @@
+You are a senior Staff-level DevOps + AI Systems Architect.
+
+I already have an `agent-cli` system that:
+- Maintains `.agent` knowledge base
+- Maintains `.memory`
+- Has commands: analyze, learn, review, decide, snapshot
+- Supports husky integration
+
+Now I need you to upgrade it to ENTERPRISE-GRADE.
+
+This system must be safe in:
+- Local development
+- Feature branches
+- Pull Requests
+- CI pipelines
+- Production environments
+
+This is NOT a toy implementation.
+Design it like a real production automation system used in a serious engineering org.
+
+--------------------------------------------------
+PRIMARY GOALS
+--------------------------------------------------
+
+1. CI-aware behavior
+2. PR-aware behavior
+3. Branch-aware rules
+4. Infinite loop protection
+5. Failure isolation
+6. Controlled auto-commits
+7. Config-driven behavior
+8. Safe-by-default design
+9. Clean logging
+10. Extensible architecture
+
+--------------------------------------------------
+1️⃣ BRANCH-AWARE RULES
+--------------------------------------------------
+
+Behavior must change based on branch:
+
+- main / master:
+    No auto-commit allowed
+    Only validation mode
+    Fails CI if inconsistency detected
+
+- feature/*:
+    Allow auto-commit (configurable)
+
+- release/*:
+    Only allow dry-run + report mode
+
+Branch detection must be automatic via git.
+
+--------------------------------------------------
+2️⃣ CI DETECTION
+--------------------------------------------------
+
+Detect CI environments via:
+
+- process.env.CI
+- GitHub Actions
+- GitLab CI
+- Bitbucket
+- Azure DevOps
+
+If running in CI:
+
+- NEVER auto-commit
+- NEVER push
+- Run in validation mode only
+- Exit with non-zero code if:
+    - Knowledge base outdated
+    - Architecture drift detected
+    - Missing decision log entry for major change
+
+--------------------------------------------------
+3️⃣ PR-AWARE MODE
+--------------------------------------------------
+
+When running inside Pull Request:
+
+- Generate structured report
+- Output markdown summary
+- Do NOT modify files
+- Do NOT commit
+
+If possible:
+- Output file: agent-report.md
+- Include:
+    - Architecture impact
+    - Business logic impact
+    - Missing documentation
+    - Suggested decision entries
+    - Technical debt detection
+
+--------------------------------------------------
+4️⃣ SAFE AUTO-COMMIT RULES
+--------------------------------------------------
+
+Auto-commit must only happen if:
+
+- Not in CI
+- Not on main/master
+- Not inside PR
+- Config allows autoCommit: true
+
+Commit message format:
+
+chore(agent): sync knowledge base [skip ci]
+
+Include [skip ci] to avoid triggering pipelines.
+
+--------------------------------------------------
+5️⃣ INFINITE LOOP PROTECTION
+--------------------------------------------------
+
+If last commit message contains:
+
+"chore(agent):"
+
+Exit immediately.
+
+Must be reliable and tested.
+
+--------------------------------------------------
+6️⃣ FAILURE ISOLATION
+--------------------------------------------------
+
+If LLM fails:
+
+- Do NOT crash git commit
+- Log warning
+- Exit gracefully
+- Never block developer workflow
+
+Add timeout protection.
+
+--------------------------------------------------
+7️⃣ CONFIG-DRIVEN ENTERPRISE CONTROL
+--------------------------------------------------
+
+Extend agent.config.json:
+
+{
+  "model": "gpt-5",
+  "autoCommit": true,
+  "strictMode": true,
+  "trackGitChanges": true,
+  "memoryStrategy": "incremental",
+  "branchRules": {
+    "main": { "allowCommit": false },
+    "feature/*": { "allowCommit": true },
+    "release/*": { "allowCommit": false }
+  },
+  "ciMode": {
+    "allowCommit": false,
+    "failOnDrift": true,
+    "generateReport": true
+  },
+  "pullRequestMode": {
+    "generateReport": true,
+    "allowCommit": false
+  }
+}
+
+System must respect this config strictly.
+
+--------------------------------------------------
+8️⃣ HUSKY STRATEGY (ENTERPRISE SAFE)
+--------------------------------------------------
+
+Pre-commit:
+    agent learn --dry-run
+
+Post-commit:
+    agent learn --auto-commit
+
+In CI:
+    agent review --ci
+
+Hooks must:
+- Be cross-platform
+- Not block commits if minor failure
+- Log clearly
+
+--------------------------------------------------
+9️⃣ DRIFT DETECTION
+--------------------------------------------------
+
+Add architecture drift detection:
+
+If:
+- Code changes affect structure
+- But architecture.md not updated
+
+Then:
+- Flag drift
+- Optionally fail CI
+
+Drift detection must be semantic, not naive string compare.
+
+--------------------------------------------------
+🔟 LOGGING SYSTEM
+--------------------------------------------------
+
+Implement structured logging:
+
+Normal mode:
+  Minimal clean logs
+
+Verbose mode:
+  Detailed steps
+
+CI mode:
+  Structured output
+
+Example:
+
+[AGENT] Branch detected: feature/auth-refactor
+[AGENT] CI: false
+[AGENT] PR: false
+[AGENT] Drift detected: yes
+[AGENT] Auto-commit: allowed
+
+--------------------------------------------------
+1️⃣1️⃣ SECURITY CONSIDERATIONS
+--------------------------------------------------
+
+- Do not expose API keys in logs
+- Mask sensitive environment variables
+- Do not include secrets in memory files
+- Add safeguard to ignore .env files
+
+--------------------------------------------------
+1️⃣2️⃣ EXTENSIBILITY DESIGN
+--------------------------------------------------
+
+Design architecture so later we can add:
+
+- Vector search memory
+- Multi-repo coordination
+- Microservice isolation
+- PR comment bot
+- Slack integration
+- Multi-team config profiles
+
+--------------------------------------------------
+OUTPUT REQUIREMENTS
+--------------------------------------------------
+
+1. Updated CLI implementation
+2. Branch detection logic
+3. CI detection logic
+4. PR detection logic
+5. Config handling logic
+6. Infinite loop guard
+7. Drift detection mechanism
+8. package.json scripts
+9. Husky setup
+10. CI example (GitHub Actions)
+11. Example PR report output
+12. Explanation of how to test safely
+
+--------------------------------------------------
+CRITICAL
+
+Do NOT simplify.
+Do NOT generate pseudo code.
+Do NOT generate toy examples.
+
+Generate realistic production-grade code.
+
+Think like a Staff Engineer designing internal tooling for a 50+ engineer org.
